@@ -28,11 +28,13 @@ jobs:
     - name: CD JOB || Pull and Run Docker  container
       if: success() 
       run: |
-        # Add your CD commands here
         echo "Running CD..."
-        docker pull ramesh144/talento-nodejs:latest
-        docker stop nodejs-container || true
-        docker rm nodejs-container || true
+        docker pull ramesh144/talento-nodejs:latest        
+        CONTAINER_NAME="nodejs-container"
+        if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
+          docker stop $CONTAINER_NAME
+          docker rm $CONTAINER_NAME
+        fi
         docker run -d --name nodejs-container -p 3000:3000 ramesh144/talento-nodejs:latest
 
     - name: Log Failure
