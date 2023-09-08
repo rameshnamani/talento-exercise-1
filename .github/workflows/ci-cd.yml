@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - feature/ci-cd
 
 jobs:
   ci-cd:
@@ -44,7 +44,7 @@ jobs:
 
     - name: Ensure Web App is Accessible
       run: |
-        curl -I http://localhost:3000 
+        sleep 5 && curl -I http://localhost:3000 
 
     - name: Finalize Workflow
       run: echo "Workflow completed."
