@@ -35,6 +35,7 @@ jobs:
           docker stop $CONTAINER_NAME
           docker rm $CONTAINER_NAME
         fi
+
         docker run -d --name nodejs-container -p 3000:3000 ramesh144/talento-nodejs:latest
 
     - name: Log Failure
