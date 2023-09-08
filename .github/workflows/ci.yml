@@ -1,9 +1,10 @@
-name: CI Pipeline
+name: Continuous Integration
 
 on:
   push:
     branches:
       - feature/ci-cd
+      - main
 
 jobs:
   build:
