@@ -1,0 +1,29 @@
+name: Continuous Deployment
+
+on:
+  push:
+    branches:
+      - feature/ci-cd
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Pull Docker image
+      run: docker pull ramesh144/talento-nodejs:latest
+
+    - name: Stop and remove existing container (if running)
+      run: |
+        CONTAINER_NAME="nodejs-container"
+        if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
+          docker stop $CONTAINER_NAME
+          docker rm $CONTAINER_NAME
+        fi
+
+    - name: Run the updated container
+      run: |
+        docker run -d --name nodejs-container -p 8080:3000 ramesh144/talento-nodejs:latest
