@@ -1,0 +1,48 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  ci-cd:
+    runs-on: self-hosted
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: CI JOB || Build and push Docker image
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN  }}
+      run: |
+        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+        docker build -t ramesh144/talento-nodejs:latest .
+        docker build -t ramesh144/talento-nodejs:$(git rev-parse --short HEAD) .
+        docker push ramesh144/talento-nodejs:latest
+        docker push ramesh144/talento-nodejs:$(git rev-parse --short HEAD)
+        docker logout
+
+    - name: CD JOB || Pull and Run Docker  container
+      if: success() 
+      run: |
+        # Add your CD commands here
+        echo "Running CD..."
+        docker pull ramesh144/talento-nodejs:latest
+        docker stop nodejs-container || true
+        docker rm nodejs-container || true
+        docker run -d --name nodejs-container -p 3000:3000 ramesh144/talento-nodejs:latest
+
+    - name: Log Failure
+      if: failure() 
+      run: |
+        echo "$(date '+%Y-%m-%d %H:%M:%S') - Repository: $GITHUB_REPOSITORY - Workflow: $GITHUB_WORKFLOW" >> failure_log.txt
+
+    - name: Ensure Web App is Accessible
+      run: |
+        curl -I http://localhost:3000 
+
+    - name: Finalize Workflow
+      run: echo "Workflow completed."
