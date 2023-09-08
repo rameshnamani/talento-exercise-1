@@ -9,7 +9,6 @@ This document outlines the steps to create a GitHub Actions workflow for Continu
 ### Build the Docker image
 
 The Dockerfile location is [Dockerfile](Dockerfile)
-Successful run for the pipeline is https://github.com/rameshnamani/talento-exercise-1/actions/runs/6119400844
 
 Pushed to Dockerhub as [talento-nodejs](https://hub.docker.com/r/ramesh144/talento-nodejs) with both latest tag and commit ID.
 
